@@ -68,6 +68,7 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
+  name: "{{ include \"prometheus-kafka-adapter.fullname\" . }}"
   type: ClusterIP
   port: 80
   annotations: {}
