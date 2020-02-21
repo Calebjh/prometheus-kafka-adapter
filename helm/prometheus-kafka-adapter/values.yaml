@@ -19,7 +19,7 @@ pod:
     prometheus.io/port: "8080"
 
 
-env:
+environment:
   # defines kafka endpoint and port, defaults to kafka:9092.
   KAFKA_BROKER_LIST: ""
   # defines kafka topic to be used, defaults to metrics.

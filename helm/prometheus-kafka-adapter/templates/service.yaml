@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "prometheus-kafka-adapter.fullname" . }}
+  name: {{ default (include "prometheus-kafka-adapter.fullname" . ) .Values.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "prometheus-kafka-adapter.labels" . | indent 4 }}
