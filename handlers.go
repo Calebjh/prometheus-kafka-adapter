@@ -80,7 +80,7 @@ func receiveHandler(producer *kafka.Producer, serializer Serializer) func(c *gin
 
 // kafkaErrorsHandler reads events off of a producer's event channel, logging
 // errors and exposing counters to prometheus by error code. Always call as
-// `go kafkaErrorsHandler(...)` as this function never returns
+// `go kafkaErrorsHandler(...)` since this function never returns
 func kafkaErrorsHandler(events <-chan (kafka.Event)) {
 	for {
 		select {
@@ -89,7 +89,6 @@ func kafkaErrorsHandler(events <-chan (kafka.Event)) {
 			case kafka.Error:
 				logrus.WithError(e).Errorf("Error returned in Kafka event")
 				kafkaErrors.WithLabelValues(e.Code().String())
-			default:
 			}
 		}
 	}
