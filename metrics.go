@@ -17,6 +17,11 @@ package main
 import "github.com/prometheus/client_golang/prometheus"
 
 var (
+	queueSize = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "kafka_queue_size",
+			Help: "Queue size for metrics sent to Kafka",
+		})
 	metricsHandledTotal = prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Name: "metrics_handled_total",
@@ -35,6 +40,7 @@ var (
 )
 
 func init() {
+	prometheus.MustRegister(queueSize)
 	prometheus.MustRegister(metricsHandledTotal)
 	prometheus.MustRegister(httpRequestsTotal)
 	prometheus.MustRegister(kafkaErrors)
