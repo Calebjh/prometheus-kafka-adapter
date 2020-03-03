@@ -61,7 +61,7 @@ func receiveHandler(producer *kafka.Producer, serializer Serializer) func(c *gin
 			return
 		}
 
-		for _, metric := range metrics {
+		for i, metric := range metrics {
 			err := producer.Produce(&kafka.Message{
 				TopicPartition: kafkaPartition,
 				Value:          metric,
@@ -70,9 +70,28 @@ func receiveHandler(producer *kafka.Producer, serializer Serializer) func(c *gin
 			if err != nil {
 				c.AbortWithStatus(http.StatusInternalServerError)
 				logrus.WithError(err).Error("couldn't produce message in kafka")
+				metricsHandledTotal.Add(float64(i))
 				return
 			}
 		}
+		metricsHandledTotal.Add(float64(len(metrics)))
+	}
+}
 
+// kafkaErrorsHandler reads events off of a producer's event channel, logging
+// errors and exposing counters to prometheus by error code. Always call as
+// `go kafkaErrorsHandler(...)` since this function blocks until the events
+// channel closes
+func kafkaErrorsHandler(events <-chan (kafka.Event)) {
+	for {
+		evt, ok := <-events
+		if !ok {
+			return
+		}
+		switch e := evt.(type) {
+		case kafka.Error:
+			logrus.WithError(e).Errorf("Error returned in Kafka event")
+			kafkaErrors.WithLabelValues(e.Code().String())
+		}
 	}
 }

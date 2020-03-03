@@ -22,14 +22,26 @@ var (
 			Name: "kafka_queue_size",
 			Help: "Queue size for metrics sent to Kafka",
 		})
+	metricsHandledTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "metrics_handled_total",
+			Help: "Count of all metrics sent to Kafka",
+		})
 	httpRequestsTotal = prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Name: "http_requests_total",
 			Help: "Count of all http requests",
 		})
+	kafkaErrors = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "kafka_errors",
+			Help: "Count of all http requests",
+		}, []string{"code"})
 )
 
 func init() {
 	prometheus.MustRegister(queueSize)
+	prometheus.MustRegister(metricsHandledTotal)
 	prometheus.MustRegister(httpRequestsTotal)
+	prometheus.MustRegister(kafkaErrors)
 }

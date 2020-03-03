@@ -65,5 +65,7 @@ func main() {
 		r.POST("/receive", receiveHandler(producer, serializer))
 	}
 
+	go kafkaErrorsHandler(producer.Events())
+
 	r.Run()
 }
